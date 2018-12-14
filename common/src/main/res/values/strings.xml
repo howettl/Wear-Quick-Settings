@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">common</string>
+    <string name="settings_owner">settings_owner</string>
+    <string name="settings_editor">settings_editor</string>
+    <string name="request_settings_update">/request-settings-update</string>
+</resources>
