@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Wear Quick Settings</string>
+    <string name="settings_service">Settings Service</string>
+    <string name="ongoing_settings_listener">Ongoing settings listener</string>
+    <string name="channel_description">An ongoing notification that enables the app to listen to settings changes in the background</string>
+    <string name="ongoing_notification_title">@string/app_name</string>
+    <string name="ongoing_notification_message">Wear Quick Settings is running normally</string>
 </resources>
