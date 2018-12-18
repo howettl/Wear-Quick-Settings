@@ -1,6 +1,5 @@
 package com.howettl.wearquicksettings.common.model
 
-import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.net.wifi.WifiManager
 import com.google.android.gms.wearable.DataMap
@@ -13,7 +12,7 @@ import com.howettl.wearquicksettings.common.util.Consts
 import com.howettl.wearquicksettings.common.util.SettingsPath
 import javax.inject.Inject
 
-class SettingsState(private val wifi: Int? = null, private val bluetooth: Boolean? = null) {
+class SettingsState(private val wifi: Int? = null) {
 
     constructor(context: Context): this() {
         DaggerCommonComponent
@@ -28,19 +27,12 @@ class SettingsState(private val wifi: Int? = null, private val bluetooth: Boolea
     private val wifiState: Int
         get() = wifi ?: wifiManager.wifiState ?: WifiManager.WIFI_STATE_DISABLED
 
-    val bluetoothEnabled: Boolean
-        get() = bluetooth ?: bluetoothManager.adapter.isEnabled ?: false
-
     @Inject
     internal lateinit var wifiManager: WifiManager
-
-    @Inject
-    internal lateinit var bluetoothManager: BluetoothManager
 
     fun toPutDataRequest(path: SettingsPath): PutDataRequest {
         return PutDataMapRequest.create(path.path).run {
             dataMap.putInt(Consts.KEY_WIFI_STATE, wifiState)
-            dataMap.putBoolean(Consts.KEY_BLUETOOTH_STATE, bluetoothEnabled)
             asPutDataRequest()
                 .setUrgent()
         }
@@ -55,13 +47,12 @@ class SettingsState(private val wifi: Int? = null, private val bluetooth: Boolea
     }
 
     override fun toString(): String {
-        return "Wifi enabled: ${isWifiEnabled()} (changing: ${isWifiChanging()}); Bluetooth enabled: $bluetoothEnabled"
+        return "Wifi enabled: ${isWifiEnabled()} (changing: ${isWifiChanging()})"
     }
 }
 
 fun DataMap.toSettingsState(): SettingsState {
     return SettingsState(
-        getInt(Consts.KEY_WIFI_STATE),
-        getBoolean(Consts.KEY_BLUETOOTH_STATE)
+        getInt(Consts.KEY_WIFI_STATE)
     )
 }

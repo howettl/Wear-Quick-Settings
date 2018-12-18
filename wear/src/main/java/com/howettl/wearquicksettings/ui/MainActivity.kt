@@ -31,9 +31,6 @@ class MainActivity: WearableActivity(), DataClient.OnDataChangedListener,
     private val wifiSwitch: Switch
         get() = findViewById(R.id.wifi_switch)
 
-    private val bluetoothSwitch: Switch
-        get() = findViewById(R.id.bluetooth_switch)
-
     @Inject
     internal lateinit var wearableDataClient: DataClient
 
@@ -102,9 +99,6 @@ class MainActivity: WearableActivity(), DataClient.OnDataChangedListener,
         wifiSwitch.isChecked = state.isWifiEnabled()
         wifiSwitch.isEnabled = !state.isWifiChanging()
 
-        bluetoothSwitch.isChecked = state.bluetoothEnabled
-        bluetoothSwitch.isEnabled = true
-
         registerControlEvents()
     }
 
@@ -112,15 +106,10 @@ class MainActivity: WearableActivity(), DataClient.OnDataChangedListener,
         wifiSwitch.setOnCheckedChangeListener { _, isChecked ->
             launch { toggleWifi(isChecked) }
         }
-
-        bluetoothSwitch.setOnCheckedChangeListener { _, isChecked ->
-            launch { toggleBt(isChecked) }
-        }
     }
 
     private fun unregisterControlEvents() {
         wifiSwitch.setOnCheckedChangeListener(null)
-        bluetoothSwitch.setOnCheckedChangeListener(null)
     }
 
     override fun onDataChanged(buffer: DataEventBuffer) {
@@ -186,25 +175,6 @@ class MainActivity: WearableActivity(), DataClient.OnDataChangedListener,
             when (sendMessageResult) {
                 is Result.Successful -> Timber.i("Successfully sent wifi state change request")
                 is Result.Failed -> Timber.e(sendMessageResult.error, "Error requesting wifi state change")
-            }
-        }
-    }
-
-    private suspend fun toggleBt(enabled: Boolean) {
-        settingsOwnerNodeId?.let { nodeId ->
-            val payload = SettingsPayload(
-                Setting.BLUETOOTH,
-                enabled,
-                this
-            )
-
-            val sendMessageResult = Wearable.getMessageClient(this@MainActivity).sendMessage(
-                nodeId, getString(R.string.request_settings_change), payload.toByteArray()
-            ).blockingAwait()
-
-            when (sendMessageResult) {
-                is Result.Successful -> Timber.i("Successfully sent bt state change request")
-                is Result.Failed -> Timber.e(sendMessageResult.error, "Error requesting bt state change")
             }
         }
     }

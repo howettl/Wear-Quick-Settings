@@ -37,14 +37,9 @@ data class SettingsPayload @JvmOverloads constructor(
     @Transient
     lateinit var wifiManager: WifiManager
 
-    @Inject
-    @Transient
-    lateinit var bluetoothManager: BluetoothManager
-
     fun executeChange() {
         when (setting) {
             Setting.WIFI -> wifiManager.isWifiEnabled = enabled
-            Setting.BLUETOOTH -> if (enabled) bluetoothManager.adapter.enable() else bluetoothManager.adapter.disable()
         }
     }
 
@@ -67,5 +62,5 @@ fun ByteArray.toSettingsPayload(context: Context): SettingsPayload? {
 }
 
 enum class Setting {
-    WIFI, BLUETOOTH
+    WIFI
 }

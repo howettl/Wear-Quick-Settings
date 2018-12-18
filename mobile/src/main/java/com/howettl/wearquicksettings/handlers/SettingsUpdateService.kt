@@ -1,7 +1,6 @@
 package com.howettl.wearquicksettings.handlers
 
 import android.app.*
-import android.bluetooth.BluetoothAdapter
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -37,7 +36,7 @@ class SettingsUpdateService: Service(), CoroutineScope {
     @Inject
     internal lateinit var wearableDataClient: DataClient
 
-    private val wifiBtStateChangeReceiver = object: BroadcastReceiver() {
+    private val wifiStateChangeReceiver = object: BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
             launch { sendActualStateUpdate() }
         }
@@ -52,8 +51,7 @@ class SettingsUpdateService: Service(), CoroutineScope {
             .build()
             .inject(this)
 
-        registerReceiver(wifiBtStateChangeReceiver, IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION))
-        registerReceiver(wifiBtStateChangeReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
+        registerReceiver(wifiStateChangeReceiver, IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION))
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -106,15 +104,14 @@ class SettingsUpdateService: Service(), CoroutineScope {
         when (putResult) {
             is Result.Successful -> Timber.i("Settings update successfully sent")
             is Result.Failed -> Timber.e(putResult.error, "Settings update error")
-            is Result.Interrupted -> {
-            }
+            is Result.Interrupted -> {}
         }
     }
 
     override fun onDestroy() {
         super.onDestroy()
 
-        unregisterReceiver(wifiBtStateChangeReceiver)
+        unregisterReceiver(wifiStateChangeReceiver)
         coroutineJob.cancel()
     }
 
