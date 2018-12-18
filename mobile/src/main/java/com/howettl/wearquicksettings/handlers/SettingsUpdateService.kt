@@ -17,7 +17,7 @@ import com.howettl.wearquicksettings.common.util.Result
 import com.howettl.wearquicksettings.common.util.SettingsPath
 import com.howettl.wearquicksettings.common.util.blockingAwait
 import com.howettl.wearquicksettings.injection.component.DaggerMobileComponent
-import com.howettl.wearquicksettings.ui.MainActivity
+import com.howettl.wearquicksettings.ui.MobileActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -66,7 +66,7 @@ class SettingsUpdateService: Service(), CoroutineScope {
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(notificationChannel)
 
-        val launchActivity = Intent(this, MainActivity::class.java).let {
+        val launchActivity = Intent(this, MobileActivity::class.java).let {
             PendingIntent.getActivity(this, 0, it, 0)
         }
 

@@ -22,7 +22,7 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
-class MainActivity: WearableActivity(), DataClient.OnDataChangedListener,
+class WearActivity: WearableActivity(), DataClient.OnDataChangedListener,
     CoroutineBase {
 
     override val coroutineJob: Job
@@ -129,7 +129,7 @@ class MainActivity: WearableActivity(), DataClient.OnDataChangedListener,
     }
 
     private suspend fun updateSettingsOwnerNodeId() {
-        val capabilityInfo = Wearable.getCapabilityClient(this@MainActivity)
+        val capabilityInfo = Wearable.getCapabilityClient(this@WearActivity)
             .getCapability(getString(R.string.settings_owner), CapabilityClient.FILTER_REACHABLE).blockingAwait()
         when (capabilityInfo) {
             is Result.Successful -> {
@@ -149,7 +149,7 @@ class MainActivity: WearableActivity(), DataClient.OnDataChangedListener,
         Timber.i("requesting settings update")
         settingsOwnerNodeId?.let { nodeId ->
             Timber.i("Requesting actual settings from node ID $nodeId")
-            val sendMessageResult = Wearable.getMessageClient(this@MainActivity).sendMessage(
+            val sendMessageResult = Wearable.getMessageClient(this@WearActivity).sendMessage(
                 nodeId, getString(R.string.request_settings_update), null
             ).blockingAwait()
 
@@ -168,7 +168,7 @@ class MainActivity: WearableActivity(), DataClient.OnDataChangedListener,
                 this
             )
 
-            val sendMessageResult = Wearable.getMessageClient(this@MainActivity).sendMessage(
+            val sendMessageResult = Wearable.getMessageClient(this@WearActivity).sendMessage(
                 nodeId, getString(R.string.request_settings_change), payload.toByteArray()
             ).blockingAwait()
 

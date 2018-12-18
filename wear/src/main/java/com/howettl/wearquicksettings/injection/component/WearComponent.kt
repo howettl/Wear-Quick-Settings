@@ -2,7 +2,7 @@ package com.howettl.wearquicksettings.injection.component
 
 import android.content.Context
 import com.howettl.wearquicksettings.common.injection.module.WearableModule
-import com.howettl.wearquicksettings.ui.MainActivity
+import com.howettl.wearquicksettings.ui.WearActivity
 import dagger.BindsInstance
 import dagger.Component
 import javax.inject.Singleton
@@ -11,7 +11,7 @@ import javax.inject.Singleton
 @Component(modules = [WearableModule::class])
 interface WearComponent {
 
-    fun inject(activity: MainActivity)
+    fun inject(activity: WearActivity)
 
     @Component.Builder
     interface Builder {

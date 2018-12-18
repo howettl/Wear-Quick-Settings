@@ -25,7 +25,7 @@
             android:value="false" />
 
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".ui.WearActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

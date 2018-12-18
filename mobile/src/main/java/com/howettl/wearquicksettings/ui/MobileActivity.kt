@@ -6,7 +6,7 @@ import android.widget.Switch
 import com.howettl.wearquicksettings.R
 import com.howettl.wearquicksettings.handlers.SettingsUpdateService
 
-class MainActivity : AppCompatActivity() {
+class MobileActivity : AppCompatActivity() {
 
     private val serviceSwitch: Switch
         get() = findViewById(R.id.service_toggle)
