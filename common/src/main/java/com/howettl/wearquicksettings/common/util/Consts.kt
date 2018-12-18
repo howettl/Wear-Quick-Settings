@@ -1,4 +1,4 @@
-package com.howettl.wearquicksettings.common
+package com.howettl.wearquicksettings.common.util
 
 object Consts {
     const val DESIRED_SETTINGS_PATH = "/desired-settings"

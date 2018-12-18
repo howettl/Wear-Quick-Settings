@@ -1,4 +1,4 @@
-package com.howettl.wearquicksettings.common
+package com.howettl.wearquicksettings.common.base
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

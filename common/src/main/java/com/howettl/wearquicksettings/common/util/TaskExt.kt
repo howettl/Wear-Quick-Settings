@@ -1,4 +1,4 @@
-package com.howettl.wearquicksettings.common
+package com.howettl.wearquicksettings.common.util
 
 import com.google.android.gms.tasks.Task
 import com.google.android.gms.tasks.Tasks

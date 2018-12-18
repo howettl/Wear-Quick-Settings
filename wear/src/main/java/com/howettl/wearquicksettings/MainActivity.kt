@@ -6,12 +6,20 @@ import android.support.wearable.activity.WearableActivity
 import android.widget.Button
 import android.widget.Switch
 import com.google.android.gms.wearable.*
-import com.howettl.wearquicksettings.common.*
+import com.howettl.wearquicksettings.common.base.CoroutineBase
+import com.howettl.wearquicksettings.common.model.Setting
+import com.howettl.wearquicksettings.common.model.SettingsPayload
+import com.howettl.wearquicksettings.common.model.SettingsState
+import com.howettl.wearquicksettings.common.model.toSettingsState
+import com.howettl.wearquicksettings.common.util.Consts
+import com.howettl.wearquicksettings.common.util.Result
+import com.howettl.wearquicksettings.common.util.blockingAwait
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class MainActivity : WearableActivity(), DataClient.OnDataChangedListener, CoroutineBase {
+class MainActivity: WearableActivity(), DataClient.OnDataChangedListener,
+    CoroutineBase {
 
     override val coroutineJob: Job
         get() = Job()
@@ -84,7 +92,7 @@ class MainActivity : WearableActivity(), DataClient.OnDataChangedListener, Corou
         wifiSwitch.isChecked = state.isWifiEnabled()
         wifiSwitch.isEnabled = !state.isWifiChanging()
 
-        bluetoothSwitch.isChecked = state.bluetooth
+        bluetoothSwitch.isChecked = state.bluetoothEnabled
         bluetoothSwitch.isEnabled = true
 
         registerControlEvents()
@@ -155,8 +163,14 @@ class MainActivity : WearableActivity(), DataClient.OnDataChangedListener, Corou
 
     private suspend fun toggleWifi(enabled: Boolean) {
         settingsOwnerNodeId?.let { nodeId ->
+            val payload = SettingsPayload(
+                Setting.WIFI,
+                enabled,
+                this
+            )
+
             val sendMessageResult = Wearable.getMessageClient(this@MainActivity).sendMessage(
-                nodeId, getString(R.string.request_settings_change), SettingsPayload(Setting.WIFI, enabled).toByteArray()
+                nodeId, getString(R.string.request_settings_change), payload.toByteArray()
             ).blockingAwait()
 
             when (sendMessageResult) {
@@ -168,8 +182,14 @@ class MainActivity : WearableActivity(), DataClient.OnDataChangedListener, Corou
 
     private suspend fun toggleBt(enabled: Boolean) {
         settingsOwnerNodeId?.let { nodeId ->
+            val payload = SettingsPayload(
+                Setting.BLUETOOTH,
+                enabled,
+                this
+            )
+
             val sendMessageResult = Wearable.getMessageClient(this@MainActivity).sendMessage(
-                nodeId, getString(R.string.request_settings_change), SettingsPayload(Setting.BLUETOOTH, enabled).toByteArray()
+                nodeId, getString(R.string.request_settings_change), payload.toByteArray()
             ).blockingAwait()
 
             when (sendMessageResult) {
