@@ -19,7 +19,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".ui.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -27,7 +27,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".ActualSettingsUpdateRequestListener">
+        <service android:name=".handlers.ActualSettingsUpdateRequestListener">
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
                 <data
@@ -36,7 +36,7 @@
                     android:scheme="wear" />
             </intent-filter>
         </service>
-        <service android:name=".ToggleSettingRequestListener">
+        <service android:name=".handlers.ToggleSettingRequestListener">
             <intent-filter>
                 <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
                 <data
@@ -45,7 +45,7 @@
                     android:scheme="wear" />
             </intent-filter>
         </service>
-        <service android:name=".SettingsUpdateService" />
+        <service android:name=".handlers.SettingsUpdateService" />
 
     </application>
 

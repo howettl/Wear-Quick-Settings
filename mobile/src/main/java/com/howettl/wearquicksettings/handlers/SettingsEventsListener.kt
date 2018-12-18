@@ -1,7 +1,8 @@
-package com.howettl.wearquicksettings
+package com.howettl.wearquicksettings.handlers
 
 import com.google.android.gms.wearable.MessageEvent
 import com.google.android.gms.wearable.WearableListenerService
+import com.howettl.wearquicksettings.R
 
 class ActualSettingsUpdateRequestListener: WearableListenerService() {
 

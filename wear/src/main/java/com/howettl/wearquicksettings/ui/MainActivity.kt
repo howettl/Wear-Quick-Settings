@@ -1,4 +1,4 @@
-package com.howettl.wearquicksettings
+package com.howettl.wearquicksettings.ui
 
 import android.net.Uri
 import android.os.Bundle
@@ -6,7 +6,9 @@ import android.support.wearable.activity.WearableActivity
 import android.widget.Button
 import android.widget.Switch
 import com.google.android.gms.wearable.*
+import com.howettl.wearquicksettings.R
 import com.howettl.wearquicksettings.common.base.CoroutineBase
+import com.howettl.wearquicksettings.common.injection.module.WearableModule
 import com.howettl.wearquicksettings.common.model.Setting
 import com.howettl.wearquicksettings.common.model.SettingsPayload
 import com.howettl.wearquicksettings.common.model.SettingsState
@@ -14,9 +16,11 @@ import com.howettl.wearquicksettings.common.model.toSettingsState
 import com.howettl.wearquicksettings.common.util.Consts
 import com.howettl.wearquicksettings.common.util.Result
 import com.howettl.wearquicksettings.common.util.blockingAwait
+import com.howettl.wearquicksettings.injection.component.DaggerWearComponent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 
 class MainActivity: WearableActivity(), DataClient.OnDataChangedListener,
     CoroutineBase {
@@ -30,14 +34,20 @@ class MainActivity: WearableActivity(), DataClient.OnDataChangedListener,
     private val bluetoothSwitch: Switch
         get() = findViewById(R.id.bluetooth_switch)
 
-    private val wearableDataClient: DataClient by lazy {
-        Wearable.getDataClient(this)
-    }
+    @Inject
+    internal lateinit var wearableDataClient: DataClient
 
     private var settingsOwnerNodeId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        DaggerWearComponent
+            .builder()
+            .context(this)
+            .wearableModule(WearableModule)
+            .build()
+            .inject(this)
+
         setContentView(R.layout.activity_main)
 
         // Enables Always-on

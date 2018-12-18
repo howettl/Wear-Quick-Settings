@@ -1,8 +1,10 @@
-package com.howettl.wearquicksettings
+package com.howettl.wearquicksettings.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Switch
+import com.howettl.wearquicksettings.R
+import com.howettl.wearquicksettings.handlers.SettingsUpdateService
 
 class MainActivity : AppCompatActivity() {
 

@@ -1,4 +1,4 @@
-package com.howettl.wearquicksettings
+package com.howettl.wearquicksettings.handlers
 
 import android.app.*
 import android.bluetooth.BluetoothAdapter
@@ -9,18 +9,22 @@ import android.content.IntentFilter
 import android.net.wifi.WifiManager
 import android.os.IBinder
 import com.google.android.gms.wearable.DataClient
-import com.google.android.gms.wearable.Wearable
+import com.howettl.wearquicksettings.R
+import com.howettl.wearquicksettings.common.injection.module.WearableModule
 import com.howettl.wearquicksettings.common.model.SettingsPayload
 import com.howettl.wearquicksettings.common.model.SettingsState
 import com.howettl.wearquicksettings.common.model.toSettingsPayload
 import com.howettl.wearquicksettings.common.util.Result
 import com.howettl.wearquicksettings.common.util.SettingsPath
 import com.howettl.wearquicksettings.common.util.blockingAwait
+import com.howettl.wearquicksettings.injection.component.DaggerMobileComponent
+import com.howettl.wearquicksettings.ui.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 class SettingsUpdateService: Service(), CoroutineScope {
@@ -30,9 +34,8 @@ class SettingsUpdateService: Service(), CoroutineScope {
 
     private val coroutineJob = Job()
 
-    private val wearableDataClient: DataClient by lazy {
-        Wearable.getDataClient(this)
-    }
+    @Inject
+    internal lateinit var wearableDataClient: DataClient
 
     private val wifiBtStateChangeReceiver = object: BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -42,6 +45,12 @@ class SettingsUpdateService: Service(), CoroutineScope {
 
     override fun onCreate() {
         super.onCreate()
+
+        DaggerMobileComponent.builder()
+            .wearableModule(WearableModule)
+            .context(this)
+            .build()
+            .inject(this)
 
         registerReceiver(wifiBtStateChangeReceiver, IntentFilter(WifiManager.NETWORK_STATE_CHANGED_ACTION))
         registerReceiver(wifiBtStateChangeReceiver, IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED))
