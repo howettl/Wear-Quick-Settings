@@ -11,10 +11,7 @@ import android.net.wifi.WifiManager
 import android.os.IBinder
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.Wearable
-import com.howettl.wearquicksettings.common.Result
-import com.howettl.wearquicksettings.common.SettingsPath
-import com.howettl.wearquicksettings.common.SettingsState
-import com.howettl.wearquicksettings.common.blockingAwait
+import com.howettl.wearquicksettings.common.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -31,6 +28,13 @@ class SettingsUpdateService: Service(), CoroutineScope {
 
     private val wearableDataClient: DataClient by lazy {
         Wearable.getDataClient(this)
+    }
+
+    private val wifiManager: WifiManager by lazy {
+        applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+    }
+    private val btManager: BluetoothManager by lazy {
+        applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
     }
 
     private val wifiBtStateChangeReceiver = object: BroadcastReceiver() {
@@ -72,17 +76,25 @@ class SettingsUpdateService: Service(), CoroutineScope {
         )
 
         launch {
-            sendActualStateUpdate()
+            if (intent.hasExtra(PAYLOAD)) {
+                executeChangeRequest(intent.getByteArrayExtra(PAYLOAD).toSettingsPayload() ?: return@launch)
+            } else {
+                sendActualStateUpdate()
+            }
         }
 
         return START_REDELIVER_INTENT
     }
 
-    private suspend fun sendActualStateUpdate() {
-        val wifiManager: WifiManager = applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        val btManager: BluetoothManager =
-            applicationContext.getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+    private fun executeChangeRequest(payload: SettingsPayload) {
+        Timber.d("Executing change request")
+        when (payload.setting) {
+            Setting.WIFI -> wifiManager.isWifiEnabled = payload.enabled
+            Setting.BLUETOOTH -> if (payload.enabled) btManager.adapter.enable() else btManager.adapter.disable()
+        }
+    }
 
+    private suspend fun sendActualStateUpdate() {
         val actualState = SettingsState(wifiManager.wifiState, btManager.adapter.isEnabled)
         val putResult =
             wearableDataClient.putDataItem(actualState.toPutDataRequest(SettingsPath.ACTUAL)).blockingAwait()
@@ -105,9 +117,16 @@ class SettingsUpdateService: Service(), CoroutineScope {
 
     companion object {
         private const val NOTIFICATION_ID = 42
+        private const val PAYLOAD = "payload"
 
         fun start(c: Context) {
             c.startForegroundService(Intent(c, SettingsUpdateService::class.java))
+        }
+
+        fun start(c: Context, payloadBytes: ByteArray) {
+            val intent = Intent(c, SettingsUpdateService::class.java)
+            intent.putExtra(PAYLOAD, payloadBytes)
+            c.startForegroundService(intent)
         }
 
         fun stop(c: Context) {

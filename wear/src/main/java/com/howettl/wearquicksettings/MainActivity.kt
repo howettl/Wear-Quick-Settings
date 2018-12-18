@@ -79,15 +79,33 @@ class MainActivity : WearableActivity(), DataClient.OnDataChangedListener, Corou
     }
 
     private fun updateActualState(state: SettingsState) {
+        unregisterControlEvents()
+
         wifiSwitch.isChecked = state.isWifiEnabled()
         wifiSwitch.isEnabled = !state.isWifiChanging()
 
         bluetoothSwitch.isChecked = state.bluetooth
         bluetoothSwitch.isEnabled = true
+
+        registerControlEvents()
+    }
+
+    private fun registerControlEvents() {
+        wifiSwitch.setOnCheckedChangeListener { _, isChecked ->
+            launch { toggleWifi(isChecked) }
+        }
+
+        bluetoothSwitch.setOnCheckedChangeListener { _, isChecked ->
+            launch { toggleBt(isChecked) }
+        }
+    }
+
+    private fun unregisterControlEvents() {
+        wifiSwitch.setOnCheckedChangeListener(null)
+        bluetoothSwitch.setOnCheckedChangeListener(null)
     }
 
     override fun onDataChanged(buffer: DataEventBuffer) {
-        Timber.i("onDataChanged")
         buffer.forEach { event: DataEvent ->
             if (event.type == DataEvent.TYPE_CHANGED) {
                 Timber.i("Received event")
@@ -131,8 +149,33 @@ class MainActivity : WearableActivity(), DataClient.OnDataChangedListener, Corou
             when (sendMessageResult) {
                 is Result.Successful -> Timber.i("Successfully sent request for actual settings update")
                 is Result.Failed -> Timber.e(sendMessageResult.error, "Failed requesting actual settings update")
-                is Result.Interrupted -> return
             }
         } ?: Timber.i("No settings owner nodes connected")
+    }
+
+    private suspend fun toggleWifi(enabled: Boolean) {
+        settingsOwnerNodeId?.let { nodeId ->
+            val sendMessageResult = Wearable.getMessageClient(this@MainActivity).sendMessage(
+                nodeId, getString(R.string.request_settings_change), SettingsPayload(Setting.WIFI, enabled).toByteArray()
+            ).blockingAwait()
+
+            when (sendMessageResult) {
+                is Result.Successful -> Timber.i("Successfully sent wifi state change request")
+                is Result.Failed -> Timber.e(sendMessageResult.error, "Error requesting wifi state change")
+            }
+        }
+    }
+
+    private suspend fun toggleBt(enabled: Boolean) {
+        settingsOwnerNodeId?.let { nodeId ->
+            val sendMessageResult = Wearable.getMessageClient(this@MainActivity).sendMessage(
+                nodeId, getString(R.string.request_settings_change), SettingsPayload(Setting.BLUETOOTH, enabled).toByteArray()
+            ).blockingAwait()
+
+            when (sendMessageResult) {
+                is Result.Successful -> Timber.i("Successfully sent bt state change request")
+                is Result.Failed -> Timber.e(sendMessageResult.error, "Error requesting bt state change")
+            }
+        }
     }
 }

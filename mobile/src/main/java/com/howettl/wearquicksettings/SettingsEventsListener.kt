@@ -15,3 +15,15 @@ class ActualSettingsUpdateRequestListener: WearableListenerService() {
         SettingsUpdateService.start(this)
     }
 }
+
+class ToggleSettingRequestListener: WearableListenerService() {
+    override fun onMessageReceived(event: MessageEvent?) {
+        super.onMessageReceived(event)
+
+        if (event?.path != getString(R.string.request_settings_change)) {
+            return
+        }
+
+        SettingsUpdateService.start(this, event?.data ?: return)
+    }
+}

@@ -3,4 +3,5 @@
     <string name="settings_owner">settings_owner</string>
     <string name="settings_editor">settings_editor</string>
     <string name="request_settings_update">/request-settings-update</string>
+    <string name="request_settings_change">/request-settings-change</string>
 </resources>
