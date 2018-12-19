@@ -19,21 +19,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <Switch
-                android:id="@+id/wifi_switch"
+            <com.howettl.wearquicksettings.widget.CircleToggle
+                android:id="@+id/wifi_toggle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:enabled="false"
-                android:switchPadding="12dp"
-                android:text="@string/wifi"
-                android:textColor="@color/primary_text_dark" />
+                app:iconDisabled="@drawable/wifi_off"
+                app:iconEnabled="@drawable/wifi_on"
+                app:radius="24dp" />
 
             <Button
                 android:id="@+id/request_update_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/wifi_switch"
+                android:layout_below="@id/wifi_toggle"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="4dp"
                 android:text="Request update"

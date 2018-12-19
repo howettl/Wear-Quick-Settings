@@ -4,7 +4,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.wearable.activity.WearableActivity
 import android.widget.Button
-import android.widget.Switch
 import com.google.android.gms.wearable.*
 import com.howettl.wearquicksettings.R
 import com.howettl.wearquicksettings.common.base.CoroutineBase
@@ -17,6 +16,7 @@ import com.howettl.wearquicksettings.common.util.Consts
 import com.howettl.wearquicksettings.common.util.Result
 import com.howettl.wearquicksettings.common.util.blockingAwait
 import com.howettl.wearquicksettings.injection.component.DaggerWearComponent
+import com.howettl.wearquicksettings.widget.CircleToggle
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -28,8 +28,8 @@ class WearActivity: WearableActivity(), DataClient.OnDataChangedListener,
     override val coroutineJob: Job
         get() = Job()
 
-    private val wifiSwitch: Switch
-        get() = findViewById(R.id.wifi_switch)
+    private val wifiToggle: CircleToggle
+        get() = findViewById(R.id.wifi_toggle)
 
     @Inject
     internal lateinit var wearableDataClient: DataClient
@@ -45,7 +45,7 @@ class WearActivity: WearableActivity(), DataClient.OnDataChangedListener,
             .build()
             .inject(this)
 
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_wear)
 
         // Enables Always-on
         setAmbientEnabled()
@@ -96,20 +96,20 @@ class WearActivity: WearableActivity(), DataClient.OnDataChangedListener,
     private fun updateActualState(state: SettingsState) {
         unregisterControlEvents()
 
-        wifiSwitch.isChecked = state.isWifiEnabled()
-        wifiSwitch.isEnabled = !state.isWifiChanging()
+        wifiToggle.isChecked = state.isWifiEnabled()
+        wifiToggle.isEnabled = !state.isWifiChanging()
 
         registerControlEvents()
     }
 
     private fun registerControlEvents() {
-        wifiSwitch.setOnCheckedChangeListener { _, isChecked ->
-            launch { toggleWifi(isChecked) }
+        wifiToggle.setOnClickListener {
+            launch { toggleWifi(wifiToggle.isChecked) }
         }
     }
 
     private fun unregisterControlEvents() {
-        wifiSwitch.setOnCheckedChangeListener(null)
+        wifiToggle.setOnClickListener(null)
     }
 
     override fun onDataChanged(buffer: DataEventBuffer) {

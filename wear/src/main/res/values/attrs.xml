@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CircleToggle">
+        <attr name="iconDisabled" format="reference" />
+        <attr name="iconEnabled" format="reference" />
+        <attr name="bgDisabled" format="color" />
+        <attr name="bgEnabled" format="color" />
+        <attr name="radius" format="dimension" />
+    </declare-styleable>
+</resources>
