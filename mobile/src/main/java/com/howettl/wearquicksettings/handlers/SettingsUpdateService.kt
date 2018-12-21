@@ -10,9 +10,9 @@ import android.os.IBinder
 import com.google.android.gms.wearable.DataClient
 import com.howettl.wearquicksettings.R
 import com.howettl.wearquicksettings.common.injection.module.WearableModule
-import com.howettl.wearquicksettings.common.model.SettingsPayload
+import com.howettl.wearquicksettings.common.model.payloads.SettingsPayload
 import com.howettl.wearquicksettings.common.model.SettingsState
-import com.howettl.wearquicksettings.common.model.toSettingsPayload
+import com.howettl.wearquicksettings.common.model.payloads.toSettingsPayload
 import com.howettl.wearquicksettings.common.util.Result
 import com.howettl.wearquicksettings.common.util.SettingsPath
 import com.howettl.wearquicksettings.common.util.blockingAwait

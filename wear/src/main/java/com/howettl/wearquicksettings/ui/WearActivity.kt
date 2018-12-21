@@ -8,9 +8,8 @@ import com.google.android.gms.wearable.*
 import com.howettl.wearquicksettings.R
 import com.howettl.wearquicksettings.common.base.CoroutineBase
 import com.howettl.wearquicksettings.common.injection.module.WearableModule
-import com.howettl.wearquicksettings.common.model.Setting
-import com.howettl.wearquicksettings.common.model.SettingsPayload
 import com.howettl.wearquicksettings.common.model.SettingsState
+import com.howettl.wearquicksettings.common.model.payloads.WifiPayload
 import com.howettl.wearquicksettings.common.model.toSettingsState
 import com.howettl.wearquicksettings.common.util.Consts
 import com.howettl.wearquicksettings.common.util.Result
@@ -30,6 +29,9 @@ class WearActivity: WearableActivity(), DataClient.OnDataChangedListener,
 
     private val wifiToggle: CircleToggle
         get() = findViewById(R.id.wifi_toggle)
+
+    private val cellDataToggle: CircleToggle
+        get() = findViewById(R.id.cell_data_toggle)
 
     @Inject
     internal lateinit var wearableDataClient: DataClient
@@ -104,7 +106,8 @@ class WearActivity: WearableActivity(), DataClient.OnDataChangedListener,
 
     private fun registerControlEvents() {
         wifiToggle.setOnClickListener {
-            launch { toggleWifi(wifiToggle.isChecked) }
+            launch { WifiPayload(wifiToggle.isChecked, this@WearActivity)
+                .sendChange(settingsOwnerNodeId ?: return@launch) }
         }
     }
 
@@ -158,24 +161,5 @@ class WearActivity: WearableActivity(), DataClient.OnDataChangedListener,
                 is Result.Failed -> Timber.e(sendMessageResult.error, "Failed requesting actual settings update")
             }
         } ?: Timber.i("No settings owner nodes connected")
-    }
-
-    private suspend fun toggleWifi(enabled: Boolean) {
-        settingsOwnerNodeId?.let { nodeId ->
-            val payload = SettingsPayload(
-                Setting.WIFI,
-                enabled,
-                this
-            )
-
-            val sendMessageResult = Wearable.getMessageClient(this@WearActivity).sendMessage(
-                nodeId, getString(R.string.request_settings_change), payload.toByteArray()
-            ).blockingAwait()
-
-            when (sendMessageResult) {
-                is Result.Successful -> Timber.i("Successfully sent wifi state change request")
-                is Result.Failed -> Timber.e(sendMessageResult.error, "Error requesting wifi state change")
-            }
-        }
     }
 }

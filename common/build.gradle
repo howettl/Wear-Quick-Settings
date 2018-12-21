@@ -35,6 +35,7 @@ dependencies {
     implementation "com.google.dagger:dagger:$dagger_version"
     kapt "com.google.dagger:dagger-compiler:$dagger_version"
     compileOnly 'org.glassfish:javax.annotation:3.1.1'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
     // Other
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"

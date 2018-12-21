@@ -19,20 +19,37 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.howettl.wearquicksettings.widget.CircleToggle
-                android:id="@+id/wifi_toggle"
+            <LinearLayout
+                android:id="@+id/top_row"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                app:iconDisabled="@drawable/wifi_off"
-                app:iconEnabled="@drawable/wifi_on"
-                app:radius="24dp" />
+                android:orientation="horizontal">
+
+                <com.howettl.wearquicksettings.widget.CircleToggle
+                    android:id="@+id/wifi_toggle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:iconDisabled="@drawable/wifi_off"
+                    app:iconEnabled="@drawable/wifi_on"
+                    app:radius="24dp" />
+
+                <com.howettl.wearquicksettings.widget.CircleToggle
+                    android:id="@+id/cell_data_toggle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    app:iconDisabled="@drawable/cell_data_off"
+                    app:iconEnabled="@drawable/cell_data_on"
+                    app:radius="24dp" />
+
+            </LinearLayout>
 
             <Button
                 android:id="@+id/request_update_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/wifi_toggle"
+                android:layout_below="@id/top_row"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="4dp"
                 android:text="Request update"
